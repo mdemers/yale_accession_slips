@@ -85,6 +85,19 @@ end
       ['enum_1'],
       ['enum_2']
   ]
+  contact_info = [
+	  ['address_1'],
+	  ['address_2'],
+	  ['address_3'],
+	  ['city'],
+	  ['region'],
+	  ['country'],
+	  ['post_code'],
+	  ['email'],
+	  ['note']
+  ]
+
+
 %>
 
 <?xml version="1.1" encoding="utf-8"?>
@@ -162,6 +175,42 @@ end
           <% @accession.linked_agents.each do |linked_agent| %>
             <fo:block>
               <%= linked_agent.dig('_resolved', 'title') %> (<%= [I18n.t("enumerations.linked_agent_role.#{linked_agent['role']}", :default => linked_agent['role']), (linked_agent['relator'] ? I18n.t("enumerations.linked_agent_archival_record_relators.#{linked_agent['relator']}", :default => linked_agent['relator']) : nil)].compact.join(', ') %>)
+		<% if linked_agent['relator'] == "dnr" %>
+	      <% contacts = linked_agent.dig('_resolved', 'agent_contacts') %> 
+	      <% contacts.each do |contact| %>
+		      <% tele = contact['telephones'] %>
+		      <fo:block font-size="small" font-weight="bold">DONOR CONTACT INFORMATION</fo:block>
+		      <fo:block text-indent="5mm"><%= contact['name'] %></fo:block>
+		      <fo:block text-indent="5mm"><%= contact['address_1'] %></fo:block>
+		      <fo:block text-indent="5mm"><%= contact['address_2'] %></fo:block>
+		      <fo:block text-indent="5mm"><%= contact['address_3'] %></fo:block>
+		      <fo:block text-indent="5mm"><%= "#{contact['city']}, #{contact['region']} #{contact['post_code']}" %></fo:block>
+		      <fo:block text-indent="5mm"><%= contact['country'] %></fo:block>
+		      <fo:block text-indent="5mm"><%= contact['email'] %></fo:block>
+		      <fo:block text-indent="5mm"><%= contact['note'] %></fo:block>
+		      <% tele.each do |pn| %>
+			      <fo:block text-indent="5mm"><%= "#{pn['number_type']} #{pn['number']} #{pn['ext']}" %></fo:block>
+		      <% end %>
+	      <% end %>
+	      <% end %>
+	       <% if linked_agent['relator'] == "dpt" %>
+              <% contacts = linked_agent.dig('_resolved', 'agent_contacts') %>
+              <% contacts.each do |contact| %>
+                      <% tele = contact['telephones'] %>
+                      <fo:block font-size="small" font-weight="bold">DEPOSITOR CONTACT INFORMATION</fo:block>
+                      <fo:block text-indent="5mm"><%= contact['name'] %></fo:block>
+                      <fo:block text-indent="5mm"><%= contact['address_1'] %></fo:block>
+                      <fo:block text-indent="5mm"><%= contact['address_2'] %></fo:block>
+                      <fo:block text-indent="5mm"><%= contact['address_3'] %></fo:block>
+                      <fo:block text-indent="5mm"><%= "#{contact['city']}, #{contact['region']} #{contact['post_code']}" %></fo:block>
+                      <fo:block text-indent="5mm"><%= contact['country'] %></fo:block>
+                      <fo:block text-indent="5mm"><%= contact['email'] %></fo:block>
+                      <fo:block text-indent="5mm"><%= contact['note'] %></fo:block>
+                      <% tele.each do |pn| %>
+			      <fo:block text-indent="5mm"><%= "#{pn['number_type']} #{pn['number']} #{pn['ext']}" %></fo:block>
+                      <% end %>
+              <% end %>
+      <% end %>
             </fo:block>
           <% end %>
         </fo:block>

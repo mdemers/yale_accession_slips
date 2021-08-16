@@ -1,3 +1,5 @@
+require_relative '../lib/static_asset_finder'
+
 class YaleAccessionSlipsController < ApplicationController
   
   set_access_control  "view_repository" => [:non_print_slip]
@@ -28,10 +30,12 @@ class YaleAccessionSlipsController < ApplicationController
     output_stream = java.io.FileOutputStream.new(output_pdf_file)
 
     begin
+	@config = java.io.File.new(StaticAssetFinder.new(File.join('stylesheets')).find('fop-config.xml'))
       input_stream = java.io.FileInputStream.new(fo_file.path)
 
-      fopfac = FopFactory.newInstance
-      fopfac.setBaseURL( File.join(ASUtils.find_base_directory, 'stylesheets') )
+     # fopfac = FopFactory.newInstance
+     # fopfac.setBaseURL( File.join(ASUtils.find_base_directory, 'stylesheets') )
+      fopfac = FopFactory.newInstance(@config)
       fop = fopfac.newFop(MimeConstants::MIME_PDF, output_stream)
       transformer = TransformerFactory.newInstance.newTransformer()
       res = SAXResult.new(fop.getDefaultHandler)
